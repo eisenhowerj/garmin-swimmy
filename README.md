@@ -45,6 +45,24 @@ Use watch data that directly supports lap/performance and health insights:
 - heart rate for effort/load trends
 - calories/body metrics from device profile where available
 
+#### Sensor strategy architecture
+
+- `watch/source/SensorManager.mc` subscribes to heart-rate and accelerometer
+  sensors via the Connect IQ Sensor API. It dispatches updates through a
+  `SensorListener` interface so consumers stay decoupled from hardware details.
+- `watch/source/SwimSession.mc` models in-progress swim state: lap count,
+  distance, elapsed time, pace /100m, stroke count (peak-detection on accel
+  magnitude), heart rate, and calories from `ActivityMonitor`.
+- `watch/source/SwimController.mc` orchestrates the session and sensor manager,
+  acting as the `SensorListener` to route data into `SwimSession` and refresh
+  the UI on a 1-second timer.
+- `watch/source/SwimMetricsView.mc` renders the in-swim data screen with pace,
+  laps, time, HR, and stroke count.
+- `watch/source/SwimSessionDelegate.mc` maps user input (select = record lap,
+  back = stop session).
+- `watch/source/WorkoutPickerDelegate.mc` transitions from workout selection
+  into an active swim session with default 25 m pool length.
+
 ### 3) Watch UX (Material-inspired, readability-first)
 - High contrast AMOLED color tokens (dark background, bright accent).
 - Large typography and big tap targets.
