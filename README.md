@@ -17,6 +17,27 @@ Garmin watch app and phone companion for swimming performance.
   - preset workouts (e.g., endurance, intervals, drill sets)
   - custom workouts (name, distance/interval blocks, rest rules)
 
+#### Foundation architecture
+
+- `manifest.xml`, `monkey.jungle`, and `watch/` are the Connect IQ watch-app
+  shell, scoped to Quatix 7 Pro and Connect IQ 4.2+.
+- `shared/workout.schema.json` is the versioned interchange contract. Fields
+  are deliberately bounded so every workout can fit constrained watch storage.
+- `shared/sync-envelope.schema.json` describes ordered phone-to-watch changes.
+  A monotonic revision lets the watch ignore duplicate or stale messages.
+- `phone/src/workout-store.js` is a storage-adapter-based companion shell.
+  Its `WorkoutStore` validates the shared contract before persisting a workout
+  and emits an `upsert` or `delete` envelope for the future transport layer.
+
+#### Continuous integration
+
+GitHub Actions runs the phone tests and compiles the Connect IQ app for the
+Quatix 7 Pro. Configure `GARMIN_USERNAME` and `GARMIN_PASSWORD` repository
+secrets with a Garmin developer account before running the Connect IQ build.
+The workflow accepts the Garmin Connect IQ SDK License Agreement for that
+account and generates an ephemeral signing key; no developer key is stored in
+the repository.
+
 ### 2) Sensor strategy for swim tracking
 Use watch data that directly supports lap/performance and health insights:
 - accelerometer + stroke/motion patterns for lap/stroke detection support

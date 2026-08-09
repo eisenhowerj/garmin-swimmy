@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CIQ_SDK_VERSION: "9.1.0"
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phone-tests:
+    name: Phone tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run phone tests
+        working-directory: phone
+        run: npm test
+
+  watch-build:
+    name: Connect IQ build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install Java runtime
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends default-jre-headless
+      - name: Install Connect IQ SDK manager
+        run: |
+          curl --fail --location --silent --show-error \
+            https://github.com/lindell/connect-iq-sdk-manager-cli/releases/download/v0.8.4/connect-iq-sdk-manager-cli_0.8.4_Linux_x86_64.tar.gz \
+            --output /tmp/connect-iq-sdk-manager.tar.gz
+          # SHA-256 for connect-iq-sdk-manager-cli v0.8.4 Linux x86_64.
+          echo "5d57b8f9cfcd02d3b3f48e19d6daca0480e4c6f627926f15d8617ef8a6f57e0b  /tmp/connect-iq-sdk-manager.tar.gz" \
+            | sha256sum --check
+          sudo tar --extract --gzip --file /tmp/connect-iq-sdk-manager.tar.gz \
+            --directory /usr/local/bin connect-iq-sdk-manager
+          connect-iq-sdk-manager version
+      - name: Install SDK and Quatix device definitions
+        env:
+          GARMIN_USERNAME: ${{ secrets.GARMIN_USERNAME }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+        run: |
+          if [ -z "$GARMIN_USERNAME" ] || [ -z "$GARMIN_PASSWORD" ]; then
+            echo "::error::Configure GARMIN_USERNAME and GARMIN_PASSWORD repository secrets for Connect IQ builds."
+            exit 1
+          fi
+          # Running this step acknowledges the Garmin Connect IQ SDK License Agreement.
+          connect-iq-sdk-manager agreement accept
+          # The SDK manager reads GARMIN_USERNAME and GARMIN_PASSWORD from its environment.
+          connect-iq-sdk-manager login
+          connect-iq-sdk-manager sdk set "$CIQ_SDK_VERSION"
+          connect-iq-sdk-manager device download --manifest=manifest.xml
+          connect-iq-sdk-manager sdk current-path --bin >> "$GITHUB_PATH"
+      - name: Generate temporary developer key
+        run: |
+          openssl genrsa -out /tmp/developer_key.pem 4096
+          openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt \
+            -in /tmp/developer_key.pem -out /tmp/developer_key.der
+      - name: Compile watch app
+        run: |
+          mkdir --parents dist
+          monkeyc -f monkey.jungle -y /tmp/developer_key.der -d quatix7pro -o dist/Swimmy.prg
