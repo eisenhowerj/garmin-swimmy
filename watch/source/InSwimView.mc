@@ -9,9 +9,15 @@ class InSwimView extends WatchUi.View {
     private var _elapsed = "0:00";
     private var _hr = "--";
     private var _setProgress = "";
+    private var _paceLabel;
+    private var _lapsLabel;
+    private var _bpmLabel;
 
     function initialize() {
         View.initialize();
+        _paceLabel = WatchUi.loadResource(Rez.Strings.PaceLabel);
+        _lapsLabel = WatchUi.loadResource(Rez.Strings.Laps);
+        _bpmLabel = WatchUi.loadResource(Rez.Strings.Bpm);
     }
 
     function setPace(pace) { _pace = pace; }
@@ -35,17 +41,17 @@ class InSwimView extends WatchUi.View {
 
         // Label above primary metric
         dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
-        dc.drawText(w / 2, h / 2 - 90, Theme.FONT_LABEL, Rez.Strings.PaceLabel,
+        dc.drawText(w / 2, h / 2 - 90, Theme.FONT_LABEL, _paceLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
 
         // Secondary metrics row below
         var metricsY = h / 2 + 40;
         dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
-        dc.drawText(w / 4, metricsY, Theme.FONT_LABEL, _laps.toString() + " " + Rez.Strings.Laps,
+        dc.drawText(w / 4, metricsY, Theme.FONT_LABEL, _laps.toString() + " " + _lapsLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(w / 2, metricsY, Theme.FONT_LABEL, _elapsed,
             Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(3 * w / 4, metricsY, Theme.FONT_LABEL, _hr + " " + Rez.Strings.Bpm,
+        dc.drawText(3 * w / 4, metricsY, Theme.FONT_LABEL, _hr + " " + _bpmLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
 
         // Optional set progress (compact, bottom)
