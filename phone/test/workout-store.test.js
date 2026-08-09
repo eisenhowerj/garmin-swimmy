@@ -33,6 +33,12 @@ test("removing a workout creates a delete envelope", () => {
   assert.deepEqual(store.list(), []);
 });
 
+test("removing an unknown workout returns null", () => {
+  const store = new WorkoutStore(new MemoryStorage());
+
+  assert.equal(store.remove("unknown"), null);
+});
+
 test("rejects unsupported fields", () => {
   const store = new WorkoutStore(new MemoryStorage());
   assert.throws(() => store.save({ ...workout, unknown: true }), /unsupported fields/);

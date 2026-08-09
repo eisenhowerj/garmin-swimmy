@@ -39,7 +39,7 @@ export class WorkoutStore {
     if (!workout) return null;
     const revision = state.revision + 1;
     this.#write({ revision, workouts: state.workouts.filter((candidate) => candidate.id !== id) });
-    return envelope("delete", workout, revision, now);
+    return envelope("delete", { id: workout.id }, revision, now);
   }
 
   #read() {
@@ -75,7 +75,10 @@ export function validateWorkout(workout) {
       throw new TypeError("Workout block does not satisfy workout-v1");
     }
   });
-  if (Object.keys(workout).length !== 5) throw new TypeError("Workout contains unsupported fields");
+  const allowedFields = new Set(["schemaVersion", "id", "kind", "name", "blocks"]);
+  if (Object.keys(workout).some((field) => !allowedFields.has(field))) {
+    throw new TypeError("Workout contains unsupported fields");
+  }
 }
 
 function envelope(operation, workout, revision, now) {

@@ -4,12 +4,34 @@
   "title": "Swimmy Workout Sync Envelope v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "revision", "updatedAt", "operation", "workout"],
+  "required": ["schemaVersion", "revision", "updatedAt", "operation"],
   "properties": {
     "schemaVersion": { "const": 1 },
     "revision": { "type": "integer", "minimum": 1 },
     "updatedAt": { "type": "string", "format": "date-time" },
-    "operation": { "enum": ["upsert", "delete"] },
-    "workout": { "$ref": "workout.schema.json" }
-  }
+    "operation": { "enum": ["upsert", "delete"] }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "operation": { "const": "upsert" },
+        "workout": { "$ref": "workout.schema.json" }
+      },
+      "required": ["workout"]
+    },
+    {
+      "properties": {
+        "operation": { "const": "delete" },
+        "workout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id"],
+          "properties": {
+            "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" }
+          }
+        }
+      },
+      "required": ["workout"]
+    }
+  ]
 }
