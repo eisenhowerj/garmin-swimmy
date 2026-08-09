@@ -16,13 +16,18 @@ class WorkoutPickerDelegate extends WatchUi.BehaviorDelegate {
     function onSelect() {
         var workout = _view.getSelectedWorkout();
 
+        // The "No workouts" placeholder is not actionable
+        if (workout == null && _view.getSelectedIndex() > 0) {
+            return true;
+        }
+
         // Track recent usage if a named workout was picked
         if (workout != null && workout["id"] != null) {
             WorkoutCache.setRecent(workout["id"]);
         }
 
         // Start a swim session with default pool length
-        var controller = new SwimController(_defaultPoolLength);
+        var controller = new SwimController(_defaultPoolLength, workout);
         controller.startSwim();
 
         var view = new SwimMetricsView(controller.getSession());

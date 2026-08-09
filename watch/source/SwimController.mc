@@ -7,10 +7,12 @@ class SwimController extends SensorListener {
     hidden var _session = null;
     hidden var _sensorManager = null;
     hidden var _updateTimer = null;
+    hidden var _workout = null;
 
-    function initialize(poolLengthMeters) {
+    function initialize(poolLengthMeters, workout) {
         _session = new SwimSession(poolLengthMeters);
         _sensorManager = new SensorManager(self);
+        _workout = workout;
     }
 
     function startSwim() {
@@ -52,5 +54,9 @@ class SwimController extends SensorListener {
 
     function getSensorManager() {
         return _sensorManager;
+    }
+
+    function getWorkout() {
+        return _workout;
     }
 }
