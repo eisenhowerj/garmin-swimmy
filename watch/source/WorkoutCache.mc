@@ -1,4 +1,5 @@
 using Toybox.Application;
+using Toybox.Lang;
 
 // WorkoutCache persists synced workouts and the most-recently-used workout ID
 // in Application.Storage so they survive app restarts.
