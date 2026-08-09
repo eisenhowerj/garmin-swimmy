@@ -41,7 +41,7 @@ class MilestoneView extends WatchUi.View {
             Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    function dismiss() {
+    function dismiss() as Void {
         if (_dismissed) { return; }
         _dismissed = true;
         _timer.stop();
