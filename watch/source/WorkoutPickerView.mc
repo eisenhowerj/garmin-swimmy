@@ -8,9 +8,15 @@ class WorkoutPickerView extends WatchUi.View {
     private var _selected = 0;
     private var _items;       // Array of { "label" => String, "workout" => Dict|null }
     private var _scrollOffset = 0;
+    private var _selectWorkoutLabel;
+    private var _quickStartLabel;
+    private var _noWorkoutsLabel;
 
     function initialize() {
         View.initialize();
+        _selectWorkoutLabel = WatchUi.loadResource(Rez.Strings.SelectWorkout);
+        _quickStartLabel = WatchUi.loadResource(Rez.Strings.QuickStart);
+        _noWorkoutsLabel = WatchUi.loadResource(Rez.Strings.NoWorkouts);
         _items = buildItems();
     }
 
@@ -56,7 +62,7 @@ class WorkoutPickerView extends WatchUi.View {
 
         // Title – centered, accent color
         dc.setColor(Theme.ACCENT, Theme.TRANSPARENT);
-        dc.drawText(w / 2, Theme.MARGIN, Theme.FONT_TITLE, Rez.Strings.SelectWorkout,
+        dc.drawText(w / 2, Theme.MARGIN, Theme.FONT_TITLE, _selectWorkoutLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
 
         // Compute how many rows fit below the title
@@ -98,7 +104,7 @@ class WorkoutPickerView extends WatchUi.View {
         var items = [];
 
         // Always-available quick start
-        items.add({ "label" => Rez.Strings.QuickStart, "workout" => null });
+        items.add({ "label" => _quickStartLabel, "workout" => null });
 
         // Recent workout
         var recent = WorkoutCache.getRecent();
@@ -120,7 +126,7 @@ class WorkoutPickerView extends WatchUi.View {
 
         // If no synced workouts exist, show placeholder
         if (presets.size() == 0 && customs.size() == 0 && recent == null) {
-            items.add({ "label" => Rez.Strings.NoWorkouts, "workout" => null });
+            items.add({ "label" => _noWorkoutsLabel, "workout" => null });
         }
 
         return items;

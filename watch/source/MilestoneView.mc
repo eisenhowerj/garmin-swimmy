@@ -7,11 +7,15 @@ class MilestoneView extends WatchUi.View {
     private var _message = "";
     private var _timer;
     private var _dismissed = false;
+    private var _milestoneLabel;
+    private var _tapDismissLabel;
 
     function initialize(message) {
         View.initialize();
         _message = message;
         _timer = new Timer.Timer();
+        _milestoneLabel = WatchUi.loadResource(Rez.Strings.Milestone);
+        _tapDismissLabel = WatchUi.loadResource(Rez.Strings.TapDismiss);
         // Auto-dismiss after 3 seconds
         _timer.start(method(:dismiss), 3000, false);
     }
@@ -27,7 +31,7 @@ class MilestoneView extends WatchUi.View {
         // Accent badge area
         var badgeY = h / 2 - 40;
         dc.setColor(Theme.SUCCESS, Theme.TRANSPARENT);
-        dc.drawText(w / 2, badgeY - 40, Theme.FONT_TITLE, Rez.Strings.Milestone,
+        dc.drawText(w / 2, badgeY - 40, Theme.FONT_TITLE, _milestoneLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
 
         // Milestone detail
@@ -37,7 +41,7 @@ class MilestoneView extends WatchUi.View {
 
         // Dismiss hint
         dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
-        dc.drawText(w / 2, h - Theme.MARGIN - 24, Theme.FONT_LABEL, Rez.Strings.TapDismiss,
+        dc.drawText(w / 2, h - Theme.MARGIN - 24, Theme.FONT_LABEL, _tapDismissLabel,
             Graphics.TEXT_JUSTIFY_CENTER);
     }
 

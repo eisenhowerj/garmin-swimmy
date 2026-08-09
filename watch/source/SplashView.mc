@@ -8,6 +8,8 @@ using Toybox.Application;
 class SplashView extends WatchUi.View {
     private var _timer;
     private var _logo;
+    private var _appName;
+    private var _appVersion;
 
     // Vertical gap between the app name and the version label
     private const NAME_VERSION_GAP = 4;
@@ -18,6 +20,8 @@ class SplashView extends WatchUi.View {
         View.initialize();
         _timer = new Timer.Timer();
         _logo = WatchUi.loadResource(Rez.Drawables.LauncherIcon);
+        _appName = WatchUi.loadResource(Rez.Strings.AppName);
+        _appVersion = WatchUi.loadResource(Rez.Strings.AppVersion);
     }
 
     function onShow() {
@@ -52,12 +56,12 @@ class SplashView extends WatchUi.View {
         var nameY = h / 2 + CENTER_OFFSET;
         dc.setColor(Theme.ACCENT, Theme.TRANSPARENT);
         dc.drawText(w / 2, nameY, Theme.FONT_TITLE,
-            Rez.Strings.AppName, Graphics.TEXT_JUSTIFY_CENTER);
+            _appName, Graphics.TEXT_JUSTIFY_CENTER);
 
         // Version number immediately below the name
         // Version is defined in strings.xml and should match the manifest version.
         dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
         dc.drawText(w / 2, nameY + dc.getFontHeight(Theme.FONT_TITLE) + NAME_VERSION_GAP,
-            Theme.FONT_LABEL, Rez.Strings.AppVersion, Graphics.TEXT_JUSTIFY_CENTER);
+            Theme.FONT_LABEL, _appVersion, Graphics.TEXT_JUSTIFY_CENTER);
     }
 }
