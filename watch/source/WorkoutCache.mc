@@ -10,7 +10,7 @@ class WorkoutCache {
     // Returns the array of workout dictionaries from storage.
     static function getWorkouts() {
         var data = Application.Storage.getValue(STORAGE_KEY);
-        if (data == null || !(data instanceof Array)) {
+        if (data == null || !(data instanceof Lang.Array)) {
             return [];
         }
         return data;
