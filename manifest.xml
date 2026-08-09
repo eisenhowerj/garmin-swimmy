@@ -8,7 +8,7 @@
         launcherIcon="@Drawables.LauncherIcon"
         minSdkVersion="4.2.0">
         <iq:products>
-            <iq:product id="quatix7pro"/>
+            <iq:product id="epix2pro47mm"/>
         </iq:products>
         <iq:permissions>
             <iq:uses-permission id="Sensor"/>
