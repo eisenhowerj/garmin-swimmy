@@ -5,6 +5,7 @@
         type="watch-app"
         name="@Strings.AppName"
         entry="SwimmyApp"
+        launcherIcon="@Drawables.LauncherIcon"
         minSdkVersion="4.2.0">
         <iq:products>
             <iq:product id="quatix7pro"/>
