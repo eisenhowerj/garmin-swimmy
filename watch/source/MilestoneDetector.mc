@@ -49,53 +49,62 @@ class MilestoneDetector {
     function onLapRecorded(session, nowMs) {
         var lapCount = session.getLapCount();
         var distance = session.getTotalDistanceMeters();
-        var triggered = false;
+        var message = null;
 
-        // --- Personal best split detection ---
+        // --- Personal best split detection (highest priority) ---
         if (_lapStartMs > 0) {
             var lapTime = nowMs - _lapStartMs;
             if (lapTime > 0 && (_bestLapMs == 0 || lapTime < _bestLapMs)) {
                 // Only fire PB after the first lap (need a baseline)
                 if (_bestLapMs > 0) {
                     HapticManager.pulsePersonalBest();
-                    _showMilestone("New best split!");
-                    triggered = true;
+                    message = "New best split!";
                 }
                 _bestLapMs = lapTime;
             }
         }
         _lapStartMs = nowMs;
 
-        // --- Lap count milestones ---
-        if (lapCount == 1 || (lapCount % LAP_INTERVAL == 0 && lapCount > _lastCheckedLap)) {
-            HapticManager.pulseLap();
-            _showMilestone("Lap " + lapCount);
-            triggered = true;
-        }
-        _lastCheckedLap = lapCount;
-
-        // --- Target distance reached ---
-        if (_targetDistanceMeters > 0 && !_targetDistanceReached && distance >= _targetDistanceMeters) {
-            _targetDistanceReached = true;
-            HapticManager.pulseDistance();
-            _showMilestone(distance + "m target reached!");
-            triggered = true;
-        }
-
         // --- Block completion ---
-        if (_blockBoundaries != null && _nextBlockIdx < _blockBoundaries.size()) {
-            if (distance >= _blockBoundaries[_nextBlockIdx]) {
+        if (message == null && _blockBoundaries != null) {
+            while (_nextBlockIdx < _blockBoundaries.size() && distance >= _blockBoundaries[_nextBlockIdx]) {
                 _nextBlockIdx += 1;
+            }
+            if (_nextBlockIdx > 0 && _nextBlockIdx > _lastCheckedBlockIdx()) {
                 HapticManager.pulseBlockComplete();
-                _showMilestone("Block " + _nextBlockIdx + " complete");
-                triggered = true;
+                message = "Block " + _nextBlockIdx + " complete";
             }
         }
 
-        return triggered;
+        // --- Target distance reached ---
+        if (message == null && _targetDistanceMeters > 0 && !_targetDistanceReached && distance >= _targetDistanceMeters) {
+            _targetDistanceReached = true;
+            HapticManager.pulseDistance();
+            message = distance + "m target reached!";
+        }
+
+        // --- Lap count milestones ---
+        if (message == null && (lapCount == 1 || (lapCount % LAP_INTERVAL == 0 && lapCount > _lastCheckedLap))) {
+            HapticManager.pulseLap();
+            message = "Lap " + lapCount;
+        }
+        _lastCheckedLap = lapCount;
+
+        if (message != null) {
+            _showMilestone(message);
+            return true;
+        }
+        return false;
+    }
+
+    hidden var _prevBlockIdx = 0;
+    hidden function _lastCheckedBlockIdx() {
+        var v = _prevBlockIdx;
+        _prevBlockIdx = _nextBlockIdx;
+        return v;
     }
 
     hidden function _showMilestone(message) {
-        WatchUi.pushView(new MilestoneView(message), null, WatchUi.SLIDE_UP);
+        WatchUi.pushView(new MilestoneView(message), new WatchUi.BehaviorDelegate(), WatchUi.SLIDE_UP);
     }
 }
