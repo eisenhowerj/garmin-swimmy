@@ -64,6 +64,7 @@ export class WorkoutStore {
 }
 
 export function validateWorkout(workout) {
+  const allowedFields = new Set(["schemaVersion", "id", "kind", "name", "blocks"]);
   if (!workout || workout.schemaVersion !== 1 ||
       !/^[A-Za-z0-9_-]{1,64}$/.test(workout.id) ||
       !["preset", "custom"].includes(workout.kind) ||
@@ -71,22 +72,24 @@ export function validateWorkout(workout) {
       !Array.isArray(workout.blocks) || workout.blocks.length < 1 || workout.blocks.length > 32) {
     throw new TypeError("Workout does not satisfy workout-v1");
   }
+  if (Object.keys(workout).some((field) => !allowedFields.has(field))) {
+    throw new TypeError("Workout contains unsupported fields");
+  }
   workout.blocks.forEach((block) => {
-    const allowedFields = new Set(["distanceMeters", "repetitions", "restSeconds"]);
-    if (block && Object.keys(block).some((field) => !allowedFields.has(field))) {
+    if (!block) {
+      throw new TypeError("Workout block does not satisfy workout-v1");
+    }
+    const allowedBlockFields = new Set(["distanceMeters", "repetitions", "restSeconds"]);
+    if (Object.keys(block).some((field) => !allowedBlockFields.has(field))) {
       throw new TypeError("Workout block contains unsupported fields");
     }
-    if (!block || !Number.isInteger(block.distanceMeters) || block.distanceMeters < 1 ||
+    if (!Number.isInteger(block.distanceMeters) || block.distanceMeters < 1 ||
         block.distanceMeters > 10000 || !Number.isInteger(block.repetitions) ||
         block.repetitions < 1 || block.repetitions > 100 ||
         !Number.isInteger(block.restSeconds) || block.restSeconds < 0 || block.restSeconds > 3600) {
       throw new TypeError("Workout block does not satisfy workout-v1");
     }
   });
-  const allowedFields = new Set(["schemaVersion", "id", "kind", "name", "blocks"]);
-  if (Object.keys(workout).some((field) => !allowedFields.has(field))) {
-    throw new TypeError("Workout contains unsupported fields");
-  }
 }
 
 function envelope(operation, workout, revision, now) {

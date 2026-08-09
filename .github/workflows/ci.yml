@@ -54,7 +54,7 @@ jobs:
           # Running this step acknowledges the Garmin Connect IQ SDK License Agreement.
           connect-iq-sdk-manager agreement accept
           connect-iq-sdk-manager login
-          connect-iq-sdk-manager sdk set ^9.1.0
+          connect-iq-sdk-manager sdk set 9.1.0
           connect-iq-sdk-manager device download --manifest=manifest.xml
           connect-iq-sdk-manager sdk current-path --bin >> "$GITHUB_PATH"
       - name: Generate temporary developer key
