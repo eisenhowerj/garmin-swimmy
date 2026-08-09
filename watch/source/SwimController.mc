@@ -1,3 +1,4 @@
+using Toybox.System;
 using Toybox.WatchUi;
 using Toybox.Timer;
 
@@ -8,16 +9,19 @@ class SwimController extends SensorListener {
     hidden var _sensorManager = null;
     hidden var _updateTimer = null;
     hidden var _workout = null;
+    hidden var _milestoneDetector = null;
 
     function initialize(poolLengthMeters, workout) {
         _session = new SwimSession(poolLengthMeters);
         _sensorManager = new SensorManager(self);
         _workout = workout;
+        _milestoneDetector = new MilestoneDetector(workout, poolLengthMeters);
     }
 
     function startSwim() {
         _session.start();
         _sensorManager.start();
+        _milestoneDetector.onSessionStart(System.getTimer());
 
         // Periodic UI refresh every second
         _updateTimer = new Timer.Timer();
@@ -46,6 +50,12 @@ class SwimController extends SensorListener {
     function onSensorUpdate(sensorManager) {
         _session.updateHeartRate(sensorManager.getHeartRate());
         _session.updateCalories(sensorManager.getCalories());
+    }
+
+    // Record a lap and check for milestones
+    function recordLap() {
+        _session.recordLap();
+        _milestoneDetector.onLapRecorded(_session, System.getTimer());
     }
 
     function getSession() {

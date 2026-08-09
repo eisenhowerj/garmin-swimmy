@@ -12,8 +12,8 @@ class SwimSessionDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() {
-        // Record a lap on select/tap
-        _controller.getSession().recordLap();
+        // Record a lap on select/tap (also checks milestones)
+        _controller.recordLap();
         WatchUi.requestUpdate();
         return true;
     }
