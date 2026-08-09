@@ -43,7 +43,7 @@ test("removing an unknown workout returns null", () => {
 
 test("rejects unsupported fields", () => {
   const store = new WorkoutStore(new MemoryStorage());
-  assert.throws(() => store.save({ ...workout, unknown: true }), /unsupported fields/);
+  assert.throws(() => store.save({ ...workout, unknown: true }), /Workout contains unsupported fields/);
 });
 
 test("rejects corrupt persisted state", () => {
@@ -67,5 +67,5 @@ test("rejects unsupported workout block fields", () => {
     blocks: [{ ...workout.blocks[0], effort: "easy" }]
   };
 
-  assert.throws(() => store.save(invalidWorkout), /unsupported fields/);
+  assert.throws(() => store.save(invalidWorkout), /Workout block contains unsupported fields/);
 });
