@@ -45,7 +45,12 @@ export class WorkoutStore {
   #read() {
     const raw = this.#storage.getItem(this.#key);
     if (raw === null) return { revision: 0, workouts: [] };
-    const state = JSON.parse(raw);
+    let state;
+    try {
+      state = JSON.parse(raw);
+    } catch {
+      throw new TypeError("Stored workout data is invalid");
+    }
     if (!Number.isInteger(state.revision) || state.revision < 1 || !Array.isArray(state.workouts)) {
       throw new TypeError("Stored workout data is invalid");
     }
@@ -68,11 +73,13 @@ export function validateWorkout(workout) {
   }
   workout.blocks.forEach((block) => {
     const allowedFields = new Set(["distanceMeters", "repetitions", "restSeconds"]);
+    if (block && Object.keys(block).some((field) => !allowedFields.has(field))) {
+      throw new TypeError("Workout block contains unsupported fields");
+    }
     if (!block || !Number.isInteger(block.distanceMeters) || block.distanceMeters < 1 ||
         block.distanceMeters > 10000 || !Number.isInteger(block.repetitions) ||
         block.repetitions < 1 || block.repetitions > 100 ||
-        !Number.isInteger(block.restSeconds) || block.restSeconds < 0 || block.restSeconds > 3600 ||
-        Object.keys(block).some((field) => !allowedFields.has(field))) {
+        !Number.isInteger(block.restSeconds) || block.restSeconds < 0 || block.restSeconds > 3600) {
       throw new TypeError("Workout block does not satisfy workout-v1");
     }
   });

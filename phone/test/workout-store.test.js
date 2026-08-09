@@ -52,3 +52,20 @@ test("rejects corrupt persisted state", () => {
 
   assert.throws(() => new WorkoutStore(storage).list(), /Stored workout data is invalid/);
 });
+
+test("rejects invalid JSON in persisted state", () => {
+  const storage = new MemoryStorage();
+  storage.setItem("swimmy.workouts.v1", "{");
+
+  assert.throws(() => new WorkoutStore(storage).list(), /Stored workout data is invalid/);
+});
+
+test("rejects unsupported workout block fields", () => {
+  const store = new WorkoutStore(new MemoryStorage());
+  const invalidWorkout = {
+    ...workout,
+    blocks: [{ ...workout.blocks[0], effort: "easy" }]
+  };
+
+  assert.throws(() => store.save(invalidWorkout), /unsupported fields/);
+});
