@@ -65,18 +65,21 @@ export class WorkoutStore {
 
 export function validateWorkout(workout) {
   const allowedFields = new Set(["schemaVersion", "id", "kind", "name", "blocks"]);
-  if (!workout || workout.schemaVersion !== 1 ||
+  if (!workout || typeof workout !== "object" || Array.isArray(workout)) {
+    throw new TypeError("Workout does not satisfy workout-v1");
+  }
+  if (Object.keys(workout).some((field) => !allowedFields.has(field))) {
+    throw new TypeError("Workout contains unsupported fields");
+  }
+  if (workout.schemaVersion !== 1 ||
       !/^[A-Za-z0-9_-]{1,64}$/.test(workout.id) ||
       !["preset", "custom"].includes(workout.kind) ||
       typeof workout.name !== "string" || workout.name.length < 1 || workout.name.length > 48 ||
       !Array.isArray(workout.blocks) || workout.blocks.length < 1 || workout.blocks.length > 32) {
     throw new TypeError("Workout does not satisfy workout-v1");
   }
-  if (Object.keys(workout).some((field) => !allowedFields.has(field))) {
-    throw new TypeError("Workout contains unsupported fields");
-  }
   workout.blocks.forEach((block) => {
-    if (!block) {
+    if (!block || typeof block !== "object" || Array.isArray(block)) {
       throw new TypeError("Workout block does not satisfy workout-v1");
     }
     const allowedBlockFields = new Set(["distanceMeters", "repetitions", "restSeconds"]);
