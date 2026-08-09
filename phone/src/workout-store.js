@@ -67,11 +67,12 @@ export function validateWorkout(workout) {
     throw new TypeError("Workout does not satisfy workout-v1");
   }
   workout.blocks.forEach((block) => {
+    const allowedFields = new Set(["distanceMeters", "repetitions", "restSeconds"]);
     if (!block || !Number.isInteger(block.distanceMeters) || block.distanceMeters < 1 ||
         block.distanceMeters > 10000 || !Number.isInteger(block.repetitions) ||
         block.repetitions < 1 || block.repetitions > 100 ||
         !Number.isInteger(block.restSeconds) || block.restSeconds < 0 || block.restSeconds > 3600 ||
-        Object.keys(block).length !== 3) {
+        Object.keys(block).some((field) => !allowedFields.has(field))) {
       throw new TypeError("Workout block does not satisfy workout-v1");
     }
   });

@@ -29,7 +29,9 @@ test("removing a workout creates a delete envelope", () => {
   const store = new WorkoutStore(new MemoryStorage());
   store.save(workout);
 
-  assert.equal(store.remove(workout.id).operation, "delete");
+  const change = store.remove(workout.id);
+  assert.equal(change.operation, "delete");
+  assert.equal(change.revision, 2);
   assert.deepEqual(store.list(), []);
 });
 
@@ -42,4 +44,11 @@ test("removing an unknown workout returns null", () => {
 test("rejects unsupported fields", () => {
   const store = new WorkoutStore(new MemoryStorage());
   assert.throws(() => store.save({ ...workout, unknown: true }), /unsupported fields/);
+});
+
+test("rejects corrupt persisted state", () => {
+  const storage = new MemoryStorage();
+  storage.setItem("swimmy.workouts.v1", JSON.stringify({ revision: -1, workouts: [] }));
+
+  assert.throws(() => new WorkoutStore(storage).list(), /Stored workout data is invalid/);
 });
