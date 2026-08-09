@@ -3,4 +3,9 @@
     <string id="SelectWorkout">Select Workout</string>
     <string id="QuickStart">Quick Start Swim</string>
     <string id="NoWorkouts">Sync workouts from phone</string>
+    <string id="PaceLabel">/100m</string>
+    <string id="Laps">laps</string>
+    <string id="Bpm">bpm</string>
+    <string id="Milestone">Milestone!</string>
+    <string id="TapDismiss">Tap to Dismiss</string>
 </resources>
