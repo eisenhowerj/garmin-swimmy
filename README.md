@@ -29,6 +29,15 @@ Garmin watch app and phone companion for swimming performance.
   Its `WorkoutStore` validates the shared contract before persisting a workout
   and emits an `upsert` or `delete` envelope for the future transport layer.
 
+#### Continuous integration
+
+GitHub Actions runs the phone tests and compiles the Connect IQ app for the
+Quatix 7 Pro. Configure `GARMIN_USERNAME` and `GARMIN_PASSWORD` repository
+secrets with a Garmin developer account before running the Connect IQ build.
+The workflow accepts the Garmin Connect IQ SDK License Agreement for that
+account and generates an ephemeral signing key; no developer key is stored in
+the repository.
+
 ### 2) Sensor strategy for swim tracking
 Use watch data that directly supports lap/performance and health insights:
 - accelerometer + stroke/motion patterns for lap/stroke detection support
