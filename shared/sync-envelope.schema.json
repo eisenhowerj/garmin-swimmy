@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/eisenhowerj/garmin-swimmy/schemas/workout-sync-envelope-v1.json",
+  "title": "Swimmy Workout Sync Envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "revision", "updatedAt", "operation", "workout"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "operation": { "enum": ["upsert", "delete"] },
+    "workout": { "$ref": "workout.schema.json" }
+  }
+}

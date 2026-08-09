@@ -1,0 +1,6 @@
+<resources>
+    <string id="AppName">Swimmy</string>
+    <string id="SelectWorkout">Select Workout</string>
+    <string id="QuickStart">Quick Start Swim</string>
+    <string id="NoWorkouts">Sync workouts from phone</string>
+</resources>
