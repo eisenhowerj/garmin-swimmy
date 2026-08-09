@@ -25,9 +25,9 @@ class SensorManager {
         _enabled = true;
 
         // Enable heart rate and accelerometer sensors
-        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => 25}};
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
-        Sensor.enableSensorEvents(method(:onSensorData));
+        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => 25}};
+        Sensor.enableSensorEvents(method(:onSensorData), options);
     }
 
     // Stop sensor subscriptions

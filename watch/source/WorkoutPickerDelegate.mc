@@ -15,7 +15,7 @@ class WorkoutPickerDelegate extends WatchUi.BehaviorDelegate {
         controller.startSwim();
 
         var view = new SwimMetricsView(controller.getSession());
-        var delegate = new SwimSessionDelegate(controller.getSession(), controller.getSensorManager());
+        var delegate = new SwimSessionDelegate(controller);
         WatchUi.pushView(view, delegate, WatchUi.SLIDE_LEFT);
         return true;
     }

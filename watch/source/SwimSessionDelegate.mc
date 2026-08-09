@@ -4,26 +4,23 @@ using Toybox.WatchUi;
 // Tap/select records a lap (pool wall touch).
 // Back stops the session.
 class SwimSessionDelegate extends WatchUi.BehaviorDelegate {
-    hidden var _session = null;
-    hidden var _sensorManager = null;
+    hidden var _controller = null;
 
-    function initialize(session, sensorManager) {
+    function initialize(controller) {
         BehaviorDelegate.initialize();
-        _session = session;
-        _sensorManager = sensorManager;
+        _controller = controller;
     }
 
     function onSelect() {
         // Record a lap on select/tap
-        _session.recordLap();
+        _controller.getSession().recordLap();
         WatchUi.requestUpdate();
         return true;
     }
 
     function onBack() {
-        // Stop the session and sensors
-        _session.stop();
-        _sensorManager.stop();
+        // Stop the session, sensors, and timer
+        _controller.stopSwim();
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
         return true;
     }
