@@ -46,7 +46,7 @@ export class WorkoutStore {
     const raw = this.#storage.getItem(this.#key);
     if (raw === null) return { revision: 0, workouts: [] };
     const state = JSON.parse(raw);
-    if (!Number.isInteger(state.revision) || state.revision < 0 || !Array.isArray(state.workouts)) {
+    if (!Number.isInteger(state.revision) || state.revision < 1 || !Array.isArray(state.workouts)) {
       throw new TypeError("Stored workout data is invalid");
     }
     state.workouts.forEach(validateWorkout);

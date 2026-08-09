@@ -37,6 +37,8 @@ jobs:
           curl --fail --location --silent --show-error \
             https://github.com/lindell/connect-iq-sdk-manager-cli/releases/download/v0.8.4/connect-iq-sdk-manager-cli_0.8.4_Linux_x86_64.tar.gz \
             --output /tmp/connect-iq-sdk-manager.tar.gz
+          echo "5d57b8f9cfcd02d3b3f48e19d6daca0480e4c6f627926f15d8617ef8a6f57e0b  /tmp/connect-iq-sdk-manager.tar.gz" \
+            | sha256sum --check
           sudo tar --extract --gzip --file /tmp/connect-iq-sdk-manager.tar.gz \
             --directory /usr/local/bin connect-iq-sdk-manager
           connect-iq-sdk-manager version
@@ -51,7 +53,7 @@ jobs:
           fi
           # Running this step acknowledges the Garmin Connect IQ SDK License Agreement.
           connect-iq-sdk-manager agreement accept
-          connect-iq-sdk-manager login --username="$GARMIN_USERNAME" --******
+          connect-iq-sdk-manager login
           connect-iq-sdk-manager sdk set ^9.1.0
           connect-iq-sdk-manager device download --manifest=manifest.xml
           connect-iq-sdk-manager sdk current-path --bin >> "$GITHUB_PATH"

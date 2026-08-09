@@ -48,7 +48,7 @@ test("rejects unsupported fields", () => {
 
 test("rejects corrupt persisted state", () => {
   const storage = new MemoryStorage();
-  storage.setItem("swimmy.workouts.v1", JSON.stringify({ revision: -1, workouts: [] }));
+  storage.setItem("swimmy.workouts.v1", JSON.stringify({ revision: 0, workouts: [] }));
 
   assert.throws(() => new WorkoutStore(storage).list(), /Stored workout data is invalid/);
 });
