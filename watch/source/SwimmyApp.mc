@@ -6,6 +6,6 @@ class SwimmyApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        return [new WorkoutPickerView()];
+        return [new WorkoutPickerView(), new WorkoutPickerDelegate()];
     }
 }
