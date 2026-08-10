@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
-    <iq:application id="4f3a5f7d-038c-4f1e-a797-537d6a919aa5" type="watch-app" name="@Strings.AppName" entry="SwimmyApp" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="4.2.0">
+    <iq:application id="4f3a5f7d-038c-4f1e-a797-537d6a919aa5" type="watch-app" name="@Strings.AppName" entry="SwimmyApp" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="5.2.0">
         <iq:products>
             <iq:product id="epix2pro47mm"/>
         </iq:products>
