@@ -19,6 +19,8 @@ class SwimSession {
     hidden var _strokeCount = 0;
     hidden var _lastHeartRate = 0;
     hidden var _calories = 0;
+    hidden var _currentLapStartMs = 0;
+    hidden var _lastLapSeconds = null;
 
     // Stroke detection state
     hidden var _accelThreshold = 1500; // mg threshold for stroke peak
@@ -35,6 +37,8 @@ class SwimSession {
         _lapCount = 0;
         _totalDistanceMeters = 0;
         _strokeCount = 0;
+        _currentLapStartMs = _startTimeMs;
+        _lastLapSeconds = null;
     }
 
     function stop() {
@@ -46,6 +50,11 @@ class SwimSession {
 
     // Called when a pool-length lap is completed (e.g., wall touch detected)
     function recordLap() {
+        var now = System.getTimer();
+        if (_currentLapStartMs > 0 && now > _currentLapStartMs) {
+            _lastLapSeconds = (now - _currentLapStartMs) / 1000;
+        }
+        _currentLapStartMs = now;
         _lapCount += 1;
         _totalDistanceMeters = _lapCount * _poolLengthMeters;
     }
@@ -108,6 +117,13 @@ class SwimSession {
         return _elapsedMs / 1000;
     }
 
+    function getCurrentLapSeconds() {
+        if (_running) {
+            return (System.getTimer() - _currentLapStartMs) / 1000;
+        }
+        return _lastLapSeconds == null ? 0 : _lastLapSeconds;
+    }
+
     function getLapCount() {
         return _lapCount;
     }
@@ -122,6 +138,10 @@ class SwimSession {
 
     function getHeartRate() {
         return _lastHeartRate;
+    }
+
+    function getLastLapSeconds() {
+        return _lastLapSeconds;
     }
 
     function getCalories() {

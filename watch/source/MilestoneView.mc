@@ -21,28 +21,25 @@ class MilestoneView extends WatchUi.View {
     }
 
     function onUpdate(dc) {
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-
-        // Semi-transparent dark overlay
+        // Dark background
         dc.setColor(Theme.BG, Theme.BG);
         dc.clear();
 
-        // Accent badge area
-        var badgeY = h / 2 - 40;
-        dc.setColor(Theme.SUCCESS, Theme.TRANSPARENT);
-        dc.drawText(w / 2, badgeY - 40, Theme.FONT_TITLE, _milestoneLabel,
-            Graphics.TEXT_JUSTIFY_CENTER);
+        var safeTop = Layout.safeTop(dc);
+        var safeBottom = Layout.safeBottom(dc);
+        var safeCenter = (safeTop + safeBottom) / 2;
 
-        // Milestone detail
-        dc.setColor(Theme.TEXT_PRIMARY, Theme.TRANSPARENT);
-        dc.drawText(w / 2, badgeY + 20, Theme.FONT_SECONDARY, _message,
-            Graphics.TEXT_JUSTIFY_CENTER);
+        // Milestone label at upper-center safe zone
+        var labelY = safeTop + 30;
+        Layout.drawCenteredTextFitted(dc, labelY, Theme.TITLE_FONTS, _milestoneLabel, Theme.SUCCESS);
 
-        // Dismiss hint
-        dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
-        dc.drawText(w / 2, h - Theme.MARGIN - 24, Theme.FONT_LABEL, _tapDismissLabel,
-            Graphics.TEXT_JUSTIFY_CENTER);
+        // Milestone message detail at center, with text fitting
+        var messageY = safeCenter;
+        Layout.drawCenteredTextFitted(dc, messageY, Theme.BODY_FONTS, _message, Theme.TEXT_PRIMARY);
+
+        // Dismiss hint at lower-center safe zone
+        var hintY = safeBottom - 40;
+        Layout.drawCenteredTextFitted(dc, hintY, Theme.BODY_FONTS, _tapDismissLabel, Theme.TEXT_SECONDARY);
     }
 
     function dismiss() as Void {

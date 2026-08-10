@@ -29,7 +29,15 @@ module Theme {
     const FONT_SECONDARY = Graphics.FONT_MEDIUM;
     const FONT_LABEL = Graphics.FONT_SMALL;
 
-    // Layout constants for 416×416 AMOLED (Quatix 7 Pro)
+    // Layout constants for 416×416 circular AMOLED target (47mm class)
     const MARGIN = 18;
     const ROW_HEIGHT = 56;
+    const SAFE_RADIUS = 192;
+    const SAFE_MARGIN = 14;
+    const MIN_HALF_WIDTH = 70;
+
+    // Font fallback stacks for constrained circular regions.
+    const TITLE_FONTS = [Graphics.FONT_LARGE, Graphics.FONT_MEDIUM, Graphics.FONT_SMALL];
+    const BODY_FONTS = [Graphics.FONT_MEDIUM, Graphics.FONT_SMALL, Graphics.FONT_TINY];
+    const METRIC_FONTS = [Graphics.FONT_NUMBER_HOT, Graphics.FONT_LARGE, Graphics.FONT_MEDIUM];
 }

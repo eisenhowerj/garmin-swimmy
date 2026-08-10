@@ -56,21 +56,18 @@ class WorkoutPickerView extends WatchUi.View {
     }
 
     function onUpdate(dc) {
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-
         // Dark AMOLED background
         dc.setColor(Theme.BG, Theme.BG);
         dc.clear();
 
-        // Title – centered, accent color
-        dc.setColor(Theme.ACCENT, Theme.TRANSPARENT);
-        dc.drawText(w / 2, Theme.MARGIN, Theme.FONT_TITLE, _selectWorkoutLabel,
-            Graphics.TEXT_JUSTIFY_CENTER);
+        // Title – centered within circular safe area
+        var titleY = Layout.safeTop(dc) + 12;
+        Layout.drawCenteredTextFitted(dc, titleY, Theme.TITLE_FONTS, _selectWorkoutLabel, Theme.ACCENT);
 
-        // Compute how many rows fit below the title
-        var listTop = Theme.MARGIN + Theme.ROW_HEIGHT + 8;
-        var maxVisible = (h - listTop - Theme.MARGIN) / Theme.ROW_HEIGHT;
+        // Compute rows that fit below title
+        var listTop = titleY + 48;
+        var safeBottom = Layout.safeBottom(dc);
+        var maxVisible = (safeBottom - listTop) / Theme.ROW_HEIGHT;
         if (maxVisible < 1) { maxVisible = 1; }
 
         // Adjust scroll so selected item is visible
@@ -85,23 +82,27 @@ class WorkoutPickerView extends WatchUi.View {
         var y = listTop;
         for (var i = _scrollOffset; i < items.size() && i < _scrollOffset + maxVisible; i++) {
             var item = items[i] as Lang.Dictionary;
-            drawRow(dc, y, item["label"], i == _selected, w);
+            drawRow(dc, y, item["label"], i == _selected);
             y += Theme.ROW_HEIGHT;
         }
     }
 
-    private function drawRow(dc, y, label, selected, width) {
+    private function drawRow(dc, y, label, selected) {
+        var left = Layout.leftAtY(dc, y) + 8;
+        var right = Layout.rightAtY(dc, y) - 8;
+        var maxWidth = right - left;
+
         if (selected) {
             // Highlight bar for selected row
             dc.setColor(Theme.ACCENT, Theme.TRANSPARENT);
-            dc.fillRoundedRectangle(Theme.MARGIN - 4, y - 4,
-                width - (Theme.MARGIN - 4) * 2, Theme.ROW_HEIGHT - 8, 8);
+            dc.fillRoundedRectangle(left - 8, y - 4, maxWidth + 16, Theme.ROW_HEIGHT - 8, 8);
             dc.setColor(Theme.BG, Theme.TRANSPARENT);
         } else {
             dc.setColor(Theme.TEXT_PRIMARY, Theme.TRANSPARENT);
         }
-        dc.drawText(Theme.MARGIN + 8, y + 4, Theme.FONT_SECONDARY, label,
-            Graphics.TEXT_JUSTIFY_LEFT);
+        
+        Layout.drawLeftTextFitted(dc, left, y + 4, maxWidth, Theme.BODY_FONTS, label, 
+            selected ? Theme.BG : Theme.TEXT_PRIMARY);
     }
 
     // Build the ordered item list: Quick Start, Recent, Presets, Customs.

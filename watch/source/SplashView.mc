@@ -11,11 +11,6 @@ class SplashView extends WatchUi.View {
     private var _appName;
     private var _appVersion;
 
-    // Vertical gap between the app name and the version label
-    private const NAME_VERSION_GAP = 4;
-    // Vertical offset to nudge name/version below center
-    private const CENTER_OFFSET = 10;
-
     function initialize() {
         View.initialize();
         _timer = new Timer.Timer();
@@ -40,28 +35,29 @@ class SplashView extends WatchUi.View {
 
     function onUpdate(dc) {
         var w = dc.getWidth();
-        var h = dc.getHeight();
 
         // Dark AMOLED background
         dc.setColor(Theme.BG, Theme.BG);
         dc.clear();
 
-        // Draw the launcher icon (logo) centered in the upper half.
-        // Use the bitmap's own dimensions so the position is always correct.
+        var safeTop = Layout.safeTop(dc);
+        var safeBottom = Layout.safeBottom(dc);
+
+        // Draw the launcher icon centered above text in circular-safe area.
         var logoW = _logo.getWidth();
         var logoH = _logo.getHeight();
-        dc.drawBitmap((w - logoW) / 2, h / 4 - logoH / 2, _logo);
+        var logoY = safeTop + 30;
+        dc.drawBitmap((w - logoW) / 2, logoY, _logo);
 
-        // App name in accent color, below vertical center
-        var nameY = h / 2 + CENTER_OFFSET;
-        dc.setColor(Theme.ACCENT, Theme.TRANSPARENT);
-        dc.drawText(w / 2, nameY, Theme.FONT_TITLE,
-            _appName, Graphics.TEXT_JUSTIFY_CENTER);
+        // App name in accent color, centered with fallback font sizing.
+        var nameY = logoY + logoH + 18;
+        Layout.drawCenteredTextFitted(dc, nameY, Theme.TITLE_FONTS, _appName, Theme.ACCENT);
 
-        // Version number immediately below the name
-        // Version is defined in strings.xml and should match the manifest version.
-        dc.setColor(Theme.TEXT_SECONDARY, Theme.TRANSPARENT);
-        dc.drawText(w / 2, nameY + dc.getFontHeight(Theme.FONT_TITLE) + NAME_VERSION_GAP,
-            Theme.FONT_LABEL, _appVersion, Graphics.TEXT_JUSTIFY_CENTER);
+        // Version number below the app name, kept within circular-safe bounds.
+        var versionY = nameY + 34 + 4;
+        if (versionY > safeBottom - 30) {
+            versionY = safeBottom - 30;
+        }
+        Layout.drawCenteredTextFitted(dc, versionY, Theme.BODY_FONTS, _appVersion, Theme.TEXT_SECONDARY);
     }
 }
