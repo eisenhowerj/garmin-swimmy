@@ -1,5 +1,6 @@
 using Toybox.Graphics;
 using Toybox.WatchUi;
+using Toybox.Lang;
 
 // Workout picker: one primary action (select + start), large tap targets,
 // minimal information density per screen.
@@ -47,7 +48,9 @@ class WorkoutPickerView extends WatchUi.View {
     // for Quick Start.
     function getSelectedWorkout() {
         if (_selected >= 0 && _selected < _items.size()) {
-            return _items[_selected]["workout"];
+            var items = _items as Lang.Array;
+            var selectedItem = items[_selected] as Lang.Dictionary;
+            return selectedItem["workout"];
         }
         return null;
     }
@@ -78,9 +81,11 @@ class WorkoutPickerView extends WatchUi.View {
         }
 
         // Draw visible rows
+        var items = _items as Lang.Array;
         var y = listTop;
-        for (var i = _scrollOffset; i < _items.size() && i < _scrollOffset + maxVisible; i++) {
-            drawRow(dc, y, _items[i]["label"], i == _selected, w);
+        for (var i = _scrollOffset; i < items.size() && i < _scrollOffset + maxVisible; i++) {
+            var item = items[i] as Lang.Dictionary;
+            drawRow(dc, y, item["label"], i == _selected, w);
             y += Theme.ROW_HEIGHT;
         }
     }
@@ -109,19 +114,22 @@ class WorkoutPickerView extends WatchUi.View {
         // Recent workout
         var recent = WorkoutCache.getRecent();
         if (recent != null) {
-            items.add({ "label" => "\u25B6 " + recent["name"], "workout" => recent });
+            var recentWorkout = recent as Lang.Dictionary;
+            items.add({ "label" => "\u25B6 " + recentWorkout["name"], "workout" => recentWorkout });
         }
 
         // Preset workouts
-        var presets = WorkoutCache.getByKind("preset");
+        var presets = WorkoutCache.getByKind("preset") as Lang.Array;
         for (var i = 0; i < presets.size(); i++) {
-            items.add({ "label" => presets[i]["name"], "workout" => presets[i] });
+            var preset = presets[i] as Lang.Dictionary;
+            items.add({ "label" => preset["name"], "workout" => preset });
         }
 
         // Custom workouts
-        var customs = WorkoutCache.getByKind("custom");
+        var customs = WorkoutCache.getByKind("custom") as Lang.Array;
         for (var i = 0; i < customs.size(); i++) {
-            items.add({ "label" => customs[i]["name"], "workout" => customs[i] });
+            var custom = customs[i] as Lang.Dictionary;
+            items.add({ "label" => custom["name"], "workout" => custom });
         }
 
         // If no synced workouts exist, show placeholder

@@ -1,6 +1,7 @@
 using Toybox.Activity;
 using Toybox.System;
 using Toybox.Timer;
+using Toybox.Lang;
 
 // SwimSession tracks swim performance metrics derived from sensors:
 // - Lap count and pool length configuration
@@ -55,9 +56,10 @@ class SwimSession {
         if (accelData == null) {
             return;
         }
+        var samples = accelData as Lang.Array;
         var now = System.getTimer();
-        for (var i = 0; i < accelData.size(); i++) {
-            var sample = accelData[i];
+        for (var i = 0; i < samples.size(); i++) {
+            var sample = samples[i] as Lang.Array;
             // Compute magnitude of acceleration
             var mag = _magnitude(sample[0], sample[1], sample[2]);
             if (mag > _accelThreshold) {

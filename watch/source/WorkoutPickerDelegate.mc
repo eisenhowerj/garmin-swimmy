@@ -1,4 +1,5 @@
 using Toybox.WatchUi;
+using Toybox.Lang;
 
 // WorkoutPickerDelegate handles input on the workout picker screen.
 // Supports scrolling through the workout list and starting a swim session
@@ -22,8 +23,11 @@ class WorkoutPickerDelegate extends WatchUi.BehaviorDelegate {
         }
 
         // Track recent usage if a named workout was picked
-        if (workout != null && workout["id"] != null) {
-            WorkoutCache.setRecent(workout["id"]);
+        if (workout != null) {
+            var selectedWorkout = workout as Lang.Dictionary;
+            if (selectedWorkout["id"] != null) {
+                WorkoutCache.setRecent(selectedWorkout["id"]);
+            }
         }
 
         // Start a swim session with default pool length

@@ -19,11 +19,12 @@ class WorkoutCache {
 
     // Returns workouts filtered by kind ("preset" or "custom").
     static function getByKind(kind) {
-        var all = getWorkouts();
+        var all = getWorkouts() as Lang.Array;
         var result = [];
         for (var i = 0; i < all.size(); i++) {
-            if (all[i]["kind"] != null && all[i]["kind"].equals(kind)) {
-                result.add(all[i]);
+            var workout = all[i] as Lang.Dictionary;
+            if (workout["kind"] != null && workout["kind"].equals(kind)) {
+                result.add(workout);
             }
         }
         return result;
@@ -35,10 +36,11 @@ class WorkoutCache {
         if (recentId == null) {
             return null;
         }
-        var all = getWorkouts();
+        var all = getWorkouts() as Lang.Array;
         for (var i = 0; i < all.size(); i++) {
-            if (all[i]["id"] != null && all[i]["id"].equals(recentId)) {
-                return all[i];
+            var workout = all[i] as Lang.Dictionary;
+            if (workout["id"] != null && workout["id"].equals(recentId)) {
+                return workout;
             }
         }
         return null;
@@ -61,19 +63,21 @@ class WorkoutCache {
     // Applies an incoming sync envelope (dictionary with "operation",
     // "revision", and "workout" keys). Ignores stale revisions.
     static function applySyncEnvelope(envelope) {
-        var incomingRev = envelope["revision"];
+        var syncEnvelope = envelope as Lang.Dictionary;
+        var incomingRev = syncEnvelope["revision"];
         if (incomingRev == null || incomingRev <= getRevision()) {
             return;
         }
 
-        var operation = envelope["operation"];
-        var workout = envelope["workout"];
-        var all = getWorkouts();
+        var operation = syncEnvelope["operation"];
+        var workout = syncEnvelope["workout"] as Lang.Dictionary;
+        var all = getWorkouts() as Lang.Array;
 
         if (operation != null && operation.equals("upsert") && workout != null) {
             var found = false;
             for (var i = 0; i < all.size(); i++) {
-                if (all[i]["id"] != null && all[i]["id"].equals(workout["id"])) {
+                var existing = all[i] as Lang.Dictionary;
+                if (existing["id"] != null && existing["id"].equals(workout["id"])) {
                     all[i] = workout;
                     found = true;
                     break;
@@ -85,8 +89,9 @@ class WorkoutCache {
         } else if (operation != null && operation.equals("delete") && workout != null) {
             var filtered = [];
             for (var i = 0; i < all.size(); i++) {
-                if (all[i]["id"] == null || !all[i]["id"].equals(workout["id"])) {
-                    filtered.add(all[i]);
+                var existing = all[i] as Lang.Dictionary;
+                if (existing["id"] == null || !existing["id"].equals(workout["id"])) {
+                    filtered.add(existing);
                 }
             }
             all = filtered;

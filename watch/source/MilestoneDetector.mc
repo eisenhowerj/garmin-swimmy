@@ -1,4 +1,5 @@
 using Toybox.WatchUi;
+using Toybox.Lang;
 
 // MilestoneDetector evaluates swim session state after each lap or tick
 // and fires haptic + visual feedback when a milestone condition is met.
@@ -29,9 +30,10 @@ class MilestoneDetector {
 
         if (workout != null && workout.hasKey("blocks")) {
             var cumulative = 0;
-            var blocks = workout["blocks"];
+            var workoutDict = workout as Lang.Dictionary;
+            var blocks = workoutDict["blocks"] as Lang.Array;
             for (var i = 0; i < blocks.size(); i++) {
-                var block = blocks[i];
+                var block = blocks[i] as Lang.Dictionary;
                 cumulative += block["distanceMeters"] * block["repetitions"];
                 _blockBoundaries.add(cumulative);
             }
@@ -67,7 +69,8 @@ class MilestoneDetector {
 
         // --- Block completion ---
         if (message == null && _blockBoundaries != null) {
-            while (_nextBlockIdx < _blockBoundaries.size() && distance >= _blockBoundaries[_nextBlockIdx]) {
+            var boundaries = _blockBoundaries as Lang.Array;
+            while (_nextBlockIdx < boundaries.size() && distance >= boundaries[_nextBlockIdx]) {
                 _nextBlockIdx += 1;
             }
             if (_nextBlockIdx > 0 && _nextBlockIdx > _lastCheckedBlockIdx()) {

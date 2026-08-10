@@ -12,6 +12,7 @@ class SwimController extends SensorListener {
     hidden var _milestoneDetector = null;
 
     function initialize(poolLengthMeters, workout) {
+        SensorListener.initialize();
         _session = new SwimSession(poolLengthMeters);
         _sensorManager = new SensorManager(self);
         _workout = workout;
